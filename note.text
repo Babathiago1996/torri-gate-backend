@@ -1,0 +1,25 @@
+npm init -y
+then look for the main file in package.json inside main the main packages must be tally with our index.js
+then install packages
+express for server
+monpmngoose for databse
+dotenv for secret
+nodemon --save-dev for npm run dev
+create a boilerplate eg .gitignore, .env 
+.gitignore is use for any file we want to ignore eg node_modules bcoz it is heavy
+
+user schema
+fullname,email,phonenumber,password, profilepic,role(tenat or owner)
+
+reset token , resettokenexpiry work underneath
+functiom
+1.registration
+2.email and phoneNumber (account already exist)
+
+/hashing and salting
+npm install bcrypt 
+123---hash algo -->rdtfyuikjhg567
+1-a
+2-b
+3-c
+salting randomize the code with sprinkle of strings
