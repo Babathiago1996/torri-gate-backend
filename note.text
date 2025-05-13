@@ -23,3 +23,17 @@ npm install bcrypt
 2-b
 3-c
 salting randomize the code with sprinkle of strings
+bcryptjs- this responsible for hashing and salting
+1. install 
+2. bcryptjs.hash(password) --------> hashedPassword
+
+
+
+ registers --> send a mail (verification link) 24hours --->
+ verify that link () _. isVerified: true redirect to login info
+ verification process;
+ step1. generate a token (save it on the db, make sure its valid of numbr of hours)
+ step2. send it to the user via mail ()
+ a. create an email template(create email template)
+ b transfer the template to the user email
+ enable 2fa

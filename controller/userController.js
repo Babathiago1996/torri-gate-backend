@@ -1,5 +1,7 @@
 const USER=require("../models/user")
 const bcrypt=require("bcryptjs")
+const generateToken=require("../helpers/generateToken")
+const {sendWelcomeEmail}=require("../email/sendEmail")
 
 
 const handleRegister=async(req,res)=>{
@@ -19,6 +21,9 @@ try {
     const salt=await bcrypt.genSalt()
     const hashedPassword=await bcrypt.hash(password,salt)
     // verify process
+const verificationToken=generateToken()
+const verificationTokenExpires=Date.now() + 24*60*60*1000
+
     // save to db
     const user=await USER.create({
         fullName,
@@ -26,7 +31,18 @@ try {
         password:hashedPassword,
         role: role || "tenant",
         phoneNumber,
+        verificationToken,
+        verificationTokenExpires,
     })
+    // send an email
+    const clientUrl=`${process.env.FRONTEND_URL}/verify-email/${verificationToken}`
+    await sendWelcomeEmail({
+        email:user.email,
+        fullName:user.fullName,
+        clientUrl,
+
+    })
+    
     return res.status(201).json({success:true, message:"User Registered Successfull", user})
 } catch (error) {
     console.error(error)
