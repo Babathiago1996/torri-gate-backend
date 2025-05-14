@@ -50,4 +50,39 @@ const verificationTokenExpires=Date.now() + 24*60*60*1000
 }
 
 }
-module.exports={handleRegister}
+const handleVerifyEmail=async(req, res)=>{
+const {token}=req.params
+try {
+    // 1. find user input correct token
+  const user = await USER.findOne({
+    verificationToken: token,
+  });
+  if (!user) {
+    return res
+      .status(404)
+      .json({ message: "invalid verification token token", });
+  }
+// 2.check if token has expired
+if(user.verificationTokenExpires < Date.now()){
+    return res.status(400).json({message:"verification token has expired", email:user.email})
+}
+// 3. check if user is already exist
+if(user.isVerified){
+return res.status(400).json({message:"email is already verified"})
+}
+
+  // maark user as verified
+  user.isVerified = true;
+  user.verificationToken = undefined;
+  user.verificationTokenExpires = undefined;
+  await user.save();
+  return res
+    .status(200)
+    .json({ success: true, message: "email verified successfully" });
+} catch (error) {
+  console.error(error);
+  res.status(500).json({ message: error.message });
+}
+}
+
+module.exports={handleRegister,handleVerifyEmail}
