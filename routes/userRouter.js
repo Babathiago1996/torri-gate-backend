@@ -4,3 +4,4 @@ router.post("/register", handleRegister);
 router.post("/verify-email/:token", handleVerifyEmail)
 
 module.exports = router;
+
