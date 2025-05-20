@@ -51,7 +51,7 @@ const verificationTokenExpires=Date.now() + 24*60*60*1000
 }
 
 }
-const handleVerifyEmail=async(req, res)=>{
+const handleVerifyEmail=async(req, res)=>{ 
 const {token}=req.params
 try {
     // 1. find user input correct token
@@ -84,6 +84,7 @@ return res.status(400).json({message:"email is already verified"})
   console.error(error);
   res.status(500).json({ message: error.message });
 }
+
 }
 const handleLogin=async(req, res)=>{
     const {email, password,role}=req.body
@@ -106,6 +107,7 @@ if(!isPasswordCorrect){
     return res.status(401).json({message:"Invalid email or password"})
 }
 // generate a token (validity ,period)
+// jwt handles your applied for position, your special card given and it durability
 const token=jwt.sign({
     email:user.email,
     role:user.role
@@ -124,5 +126,44 @@ return res.status(200).json({success:true, token, user:{
         res.status(500).json({ message: error.message }); 
     }
 }
+const resendVerificationEmail = async (req, res) => {
+  const { email } = req.body;
 
-module.exports={handleRegister,handleVerifyEmail,handleLogin}
+  if (!email) {
+    return res.status(400).json({ message: "Email is required" });
+  }
+
+  try {
+    const user = await USER.findOne({ email });
+    if (!user) {
+      return res.status(400).json({ message: "User not found" });
+    }
+    if (user.isVerified) {
+      return res.status(400).json({ message: "Email is already verified" });
+    }
+    //generate token again
+    const newToken = generateToken();
+    const tokenExpires = Date.now() + 24 * 60 * 60 * 1000;
+
+    user.verificationToken = newToken;
+    user.verificationTokenExpires = tokenExpires;
+    await user.save();
+    //Send an email
+    const clientUrl = `${process.env.FRONTEND_URL}/verify-email/${newToken}`;
+    await sendWelcomeEmail({
+      email: user.email,
+      fullName: user.fullName,
+      clientUrl,
+    });
+
+    return res
+      .status(201)
+      .json({ success: true, message: "Verification Email sent" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: error.message });
+  }
+};
+
+
+module.exports={handleRegister,handleVerifyEmail,handleLogin, resendVerificationEmail}
