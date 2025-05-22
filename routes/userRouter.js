@@ -9,7 +9,7 @@ const {
   handleGetUser,
   handleUpdateUser
 } = require("../controller/userController");
-const {isLoggedIn,requirePermissions}=require("../middleware/auth")
+const {isLoggedIn,requiredPermissions}=require("../middleware/auth")
 
 router.post("/register", handleRegister);
 router.post("/verify-email/:token", handleVerifyEmail)
@@ -18,7 +18,7 @@ router.post("/resend-email", resendVerificationEmail)
 router.post("/forgot-password", handleForgotPassword);
 router.post("/reset-password", handleResetPassword)
 router.get("/user", handleGetUser)
-router.patch("/user",isLoggedIn,requirePermissions(["landlord"]), handleUpdateUser)
+router.patch("/user",isLoggedIn,requiredPermissions(["landlord"]), handleUpdateUser)
 
 module.exports = router;
 
