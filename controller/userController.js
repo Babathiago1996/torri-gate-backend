@@ -110,7 +110,9 @@ if(!isPasswordCorrect){
 // jwt handles your applied for position, your special card given and it durability
 const token=jwt.sign({
     email:user.email,
-    role:user.role
+    role:user.role,
+     userId:user._id
+
 }, process.env.JWT_SECRET, {expiresIn:"3 days"})
 
 
@@ -118,7 +120,8 @@ return res.status(200).json({success:true, token, user:{
     fullName:user.fullName,
     email:user.email,
     role:user.role,
-    profilePicture:user.profilePicture
+    profilePicture:user.profilePicture,
+    phoneNumber:user.phoneNumber
 }})
 
     } catch (error) {
@@ -230,6 +233,12 @@ const handleForgotPassword = async (req, res) => {
     res.status(500).json({ message: error.message });
     }
     };
+    const handleGetUser=async(req, res)=>{
+        res.send("get user")
+    }
+    const handleUpdateUser=async(req, res)=>{
+        res.send("change user")
+    }
     
 
 
@@ -240,4 +249,6 @@ module.exports = {
   resendVerificationEmail,
   handleForgotPassword,
   handleResetPassword,
+  handleGetUser,
+  handleUpdateUser
 };
