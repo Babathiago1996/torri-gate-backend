@@ -3,6 +3,7 @@ const express=require("express")
 const app=express();
 const mongoose=require("mongoose")
 const userRouter=require("./routes/userRouter")
+const propertyRouter=require("./routes/propertyRouters")
 const cors=require("cors")
 const cloudinary=require("cloudinary").v2
 const fileUpload=require("express-fileupload")
@@ -30,6 +31,7 @@ app.get("/",(req,res)=>{
     res.status(200).json({success:true, message:"Torri Gate Server"})
 })
 app.use("/api/auth",userRouter)
+app.use("/api/property", propertyRouter)
 
 // error route
 app.use((req,res)=>{
