@@ -99,7 +99,7 @@ const getAllProperty = async (req, res) => {
         num: properties.length,
         totalPages,
         currentPage: parseInt(page),
-        properties,
+        properties,totalProperties
       });
   } catch (error) {
     console.error(error);
