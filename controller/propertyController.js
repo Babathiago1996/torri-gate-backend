@@ -1,5 +1,5 @@
 const PROPERTY = require("../models/property");
-const cloudinary=require("cloudinary").v2
+const cloudinary = require("cloudinary").v2;
 
 const createProperty = async (req, res) => {
   const { userId } = req.user;
@@ -94,16 +94,14 @@ const getLandlordsProperty = async (req, res) => {
       landlord: userId,
       availability: "rented",
     });
-    res
-      .status(200)
-      .json({
-        availableProperties,
-        rentedProperties,
-        total,
-        currentPage: parseInt(page),
-        totalPages,
-        properties,
-      });
+    res.status(200).json({
+      availableProperties,
+      rentedProperties,
+      total,
+      currentPage: parseInt(page),
+      totalPages,
+      properties,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
@@ -119,29 +117,29 @@ const updatePropertyAvailability = async (req, res) => {
     const property = await PROPERTY.findByIdAndUpdate(propertyId);
     property.availability = availability;
     await property.save();
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "status updated successfully",
-        property,
-      });
+    res.status(200).json({
+      success: true,
+      message: "status updated successfully",
+      property,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
   }
 };
-const deleteProperty=async(req, res)=>{
-  const {userId}=req.user
-  const {propertyId}=req.params
+const deleteProperty = async (req, res) => {
+  const { userId } = req.user;
+  const { propertyId } = req.params;
   try {
-    await PROPERTY.findOneAndDelete({landlord:userId, _id:propertyId})
-    res.status(200).json({success:true, message:"property deleted successfully"})
+    await PROPERTY.findOneAndDelete({ landlord: userId, _id: propertyId });
+    res
+      .status(200)
+      .json({ success: true, message: "property deleted successfully" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
   }
-}
+};
 const getAllProperty = async (req, res) => {
   const { page = 1, location, budget, type } = req.query;
   const limit = 12;
@@ -166,14 +164,13 @@ const getAllProperty = async (req, res) => {
 
     const totalProperties = await PROPERTY.countDocuments(filter);
     const totalPages = Math.ceil(totalProperties / limit);
-    res
-      .status(200)
-      .json({
-        num: properties.length,
-        totalPages,
-        currentPage: parseInt(page),
-        properties,totalProperties
-      });
+    res.status(200).json({
+      num: properties.length,
+      totalPages,
+      currentPage: parseInt(page),
+      properties,
+      totalProperties,
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: error.message });
@@ -192,7 +189,9 @@ const getSingleProperty = async (req, res) => {
       landlord: property.landlord._id,
       _id: { $ne: propertyId },
       availability: "available",
-    });
+    })
+      .limit(3)
+      .sort("-createdAt");
     // similar price range 20% of the property price location
     // 1000 800-1200
     const priceRange = property.price * 0.2;
@@ -222,7 +221,5 @@ module.exports = {
   updatePropertyAvailability,
   getAllProperty,
   getSingleProperty,
-  deleteProperty
+  deleteProperty,
 };
-
- 
